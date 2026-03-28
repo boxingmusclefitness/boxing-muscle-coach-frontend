@@ -91,6 +91,14 @@ function Av({ coach }) {
   return <div style={coach ? S.avCoach : S.avUser}>{coach ? "BM" : "YOU"}</div>;
 }
 
+function renderMd(text) {
+  const html = text
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.+?)\*/g, "<em>$1</em>");
+  return { __html: html };
+}
+
 function Msg({ role, text }) {
   const isCoach = role === "assistant";
   const hasCTA  = isCoach && text.includes("[CTA]");
@@ -100,7 +108,7 @@ function Msg({ role, text }) {
       <Av coach={isCoach} />
       <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
         <div style={{ ...S.label, color: isCoach ? "#8B0010" : "#555" }}>{isCoach ? "Boxing Muscle Coach" : "You"}</div>
-        <div style={{ ...S.bubble, ...(isCoach ? S.coach : S.user) }}>{body}</div>
+        <div style={{ ...S.bubble, ...(isCoach ? S.coach : S.user) }} dangerouslySetInnerHTML={isCoach ? renderMd(body) : undefined}>{isCoach ? undefined : body}</div>
         {hasCTA && (
           <div style={S.ctaCard}>
             <p style={{ fontSize: 13, color: "#ccc", marginBottom: 10 }}>Want the full program — supplement protocols, advanced training blocks, and 1:1 coaching with Petros?</p>
